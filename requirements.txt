@@ -1,0 +1,13 @@
+﻿numpy==2.1.1
+pandas==2.2.3
+scikit-learn==1.5.2
+requests==2.32.3
+fastapi==0.115.0
+uvicorn==0.30.6
+SQLAlchemy==2.0.36
+psycopg[binary]==3.2.3
+PyJWT==2.9.0
+passlib[bcrypt]==1.7.4
+email-validator==2.2.0
+joblib==1.4.2
+python-dotenv==1.0.1

@@ -1,0 +1,5 @@
+# main.py
+from cli import bootstrap_and_run
+
+if __name__ == '__main__':
+    bootstrap_and_run()

@@ -1,0 +1,144 @@
+{
+  "tema": "sexo",
+  "perfil_label": "T1",
+  "estilo": "T",
+  "nivel": 1,
+  "objetivo": "prova",
+  "carga_horas_semana": 3,
+  "semanas": 4,
+  "plano": [
+    {
+      "semana": 1,
+      "objetivo_semana": "Compreender fundamentos básicos",
+      "topicos": [
+        "Conceitos de sexualidade",
+        "Anatomia sexual",
+        "Saúde sexual"
+      ],
+      "tarefas": [
+        {
+          "id": "task-1",
+          "title": "Estudar conceitos básicos",
+          "type": "teoria",
+          "hours": "1h",
+          "description": "Descricao: Revisar os conceitos fundamentais sobre sexualidade e saúde.\n\nComo fazer: ler material, fazer anotações, discutir com colegas."
+        },
+        {
+          "id": "task-2",
+          "title": "Revisar anatomia sexual",
+          "type": "teoria",
+          "hours": "1h",
+          "description": "Descricao: Entender a anatomia relacionada à sexualidade humana.\n\nComo fazer: estudar diagramas, anotar funções, revisar com vídeos."
+        },
+        {
+          "id": "task-3",
+          "title": "Leitura sobre saúde sexual",
+          "type": "leitura",
+          "hours": "1h",
+          "description": "Descricao: Aprender sobre práticas de saúde sexual e prevenção.\n\nComo fazer: ler artigos, fazer resumos, discutir em grupo."
+        }
+      ],
+      "referencias": [
+        {
+          "titulo": "Fundamentos da Sexualidade",
+          "url": "https://exemplo.com/fundamentos"
+        },
+        {
+          "titulo": "Anatomia Sexual Humana",
+          "url": "https://exemplo.com/anatomia"
+        },
+        {
+          "titulo": "Saúde Sexual e Bem-Estar",
+          "url": "https://exemplo.com/saude"
+        }
+      ]
+    },
+    {
+      "semana": 2,
+      "objetivo_semana": "Explorar aspectos emocionais",
+      "topicos": [
+        "Relacionamentos",
+        "Consentimento",
+        "Identidade sexual"
+      ],
+      "tarefas": [
+        {
+          "id": "task-4",
+          "title": "Estudar relacionamentos",
+          "type": "teoria",
+          "hours": "1h",
+          "description": "Descricao: Compreender a dinâmica dos relacionamentos afetivos.\n\nComo fazer: ler textos, anotar exemplos, discutir em grupo."
+        },
+        {
+          "id": "task-5",
+          "title": "Revisar consentimento",
+          "type": "teoria",
+          "hours": "1h",
+          "description": "Descricao: Entender a importância do consentimento nas relações.\n\nComo fazer: estudar casos, fazer anotações, debater em aula."
+        },
+        {
+          "id": "task-6",
+          "title": "Leitura sobre identidade sexual",
+          "type": "leitura",
+          "hours": "1h",
+          "description": "Descricao: Aprender sobre as diferentes identidades sexuais.\n\nComo fazer: ler artigos, fazer resumos, discutir com colegas."
+        }
+      ],
+      "referencias": [
+        {
+          "titulo": "Relacionamentos e Emoções",
+          "url": "https://exemplo.com/relacionamentos"
+        },
+        {
+          "titulo": "Consentimento e Ética",
+          "url": "https://exemplo.com/consentimento"
+        },
+        {
+          "titulo": "Identidade Sexual",
+          "url": "https://exemplo.com/identidade"
+        }
+      ]
+    },
+    {
+      "semana": 3,
+      "objetivo_semana": "Praticar questões e revisões",
+      "topicos": [
+        "Simulados",
+        "Revisão de conteúdos",
+        "Discussão em grupo"
+      ],
+      "tarefas": [
+        {
+          "id": "task-7",
+          "title": "Realizar simulados",
+          "type": "simulados",
+          "hours": "1h",
+          "description": "Descricao: Testar conhecimentos através de questões práticas.\n\nComo fazer: resolver simulados, revisar respostas, discutir erros."
+        },
+        {
+          "id": "task-8",
+          "title": "Revisar conteúdos",
+          "type": "resumo",
+          "hours": "1h",
+          "description": "Descricao: Consolidar o aprendizado através de resumos.\n\nComo fazer: criar resumos, revisar anotações, compartilhar com colegas."
+        },
+        {
+          "id": "task-9",
+          "title": "Debater em grupo",
+          "type": "discussão",
+          "hours": "1h",
+          "description": "Descricao: Discutir temas relevantes sobre sexualidade em grupo.\n\nComo fazer: preparar tópicos, moderar debate, anotar pontos importantes."
+        }
+      ],
+      "referencias": [
+        {
+          "titulo": "Simulados de Sexualidade",
+          "url": "https://exemplo.com/simulados"
+        },
+        {
+          "titulo": "Revisão de Conteúdos",
+          "url": "https://exemplo.com/revisao"
+        },
+        {
+          "titulo": "Debates sobre Sexualidade",
+          "url": "https://exemplo.com/debates

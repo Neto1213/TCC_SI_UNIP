@@ -1,0 +1,42 @@
+[
+  {
+    "id": "task-1",
+    "title": "Estudar conceitos básicos",
+    "type": "teoria",
+    "hours": "4h",
+    "description": "Aprender fundamentos essenciais da área de estudo",
+    "bucket": "novo"
+  },
+  {
+    "id": "task-2",
+    "title": "Ler documentação",
+    "type": "teoria",
+    "hours": "2h",
+    "description": "Revisar material oficial e recursos recomendados",
+    "bucket": "novo"
+  },
+  {
+    "id": "task-3",
+    "title": "Fazer exercícios práticos",
+    "type": "pratica",
+    "hours": "6h",
+    "description": "Aplicar conhecimento em exercícios e projetos práticos",
+    "bucket": "pendentes"
+  },
+  {
+    "id": "task-4",
+    "title": "Revisar anotações",
+    "type": "revisao",
+    "hours": "1h",
+    "description": "Consolidar aprendizado através de revisão ativa",
+    "bucket": "pendentes"
+  },
+  {
+    "id": "task-5",
+    "title": "Setup do ambiente",
+    "type": "pratica",
+    "hours": "2h",
+    "description": "Configurar ferramentas e ambiente de desenvolvimento",
+    "bucket": "concluidos"
+  }
+]
