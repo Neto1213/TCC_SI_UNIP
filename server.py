@@ -54,7 +54,7 @@ from app.crud.plan import (
 )
 from app.security import create_access_token
 from app.services.plan_transformer import transform_ai_plan
-from app.services.tts import synthesize_with_piper
+from app.services.tts import synthesize_with_piper, synthesize_with_elevenlabs, is_elevenlabs_configured
 
 
 MODEL_PATH = "models/studyplan_pipeline.joblib"
@@ -628,13 +628,37 @@ if _FRONTEND_DIST.exists():
 class TTSRequest(BaseModel):
     text: str
     language: Optional[str] = None
+    provider: Optional[str] = Field(
+        default=None,
+        description="Prefered provider. Defaults to ElevenLabs when configured, otherwise Piper.",
+        pattern="^(piper|elevenlabs)$",
+    )
 
 @app.post("/api/v1/tts")
 def generate_tts(body: TTSRequest) -> Response:
     """
-    Endpoint simples que expõe o mecanismo TTS (Piper).
-    Retorna um áudio WAV, permitindo uso aberto sem depender de serviços pagos.
+    Endpoint simples que expõe o mecanismo TTS.
+    Tenta ElevenLabs (se configurado via env) antes de recorrer ao Piper local.
     """
+    preferred = (body.provider or "").lower()
+    # First try ElevenLabs if configured or explicitly requested, otherwise fall back to Piper
+    if preferred != "piper" and is_elevenlabs_configured():
+        try:
+            audio_bytes = synthesize_with_elevenlabs(body.text, body.language)
+            headers = {
+                "Cache-Control": "no-store",
+                "Content-Disposition": "inline; filename=tts.mp3",
+                "X-TTS-Provider": "elevenlabs",
+            }
+            return Response(content=audio_bytes, media_type="audio/mpeg", headers=headers)
+        except HTTPException:
+            # Fall back to Piper if ElevenLabs fails
+            pass
+
     audio_bytes = synthesize_with_piper(body.text, body.language)
-    headers = {"Cache-Control": "no-store", "Content-Disposition": "inline; filename=tts.wav"}
+    headers = {
+        "Cache-Control": "no-store",
+        "Content-Disposition": "inline; filename=tts.wav",
+        "X-TTS-Provider": "piper",
+    }
     return Response(content=audio_bytes, media_type="audio/wav", headers=headers)

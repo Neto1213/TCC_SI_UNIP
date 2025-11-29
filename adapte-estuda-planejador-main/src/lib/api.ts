@@ -93,6 +93,8 @@ export interface AuthenticatedUser {
   created_at?: string | null;
 }
 
+export type TtsProvider = 'piper' | 'elevenlabs';
+
 const API_BASE = (import.meta as any).env?.VITE_API_BASE ?? "";
 
 const TOKEN_KEY = 'auth_token';
@@ -200,11 +202,14 @@ export async function getPlan(planId: number): Promise<PlanDetail> {
   return res.json();
 }
 
-export async function fetchTtsAudio(text: string, language?: string): Promise<Blob> {
+export async function fetchTtsAudio(text: string, language?: string, provider?: TtsProvider): Promise<Blob> {
+  const body: Record<string, any> = { text, language };
+  if (provider) body.provider = provider;
+
   const res = await fetch(`${API_BASE}/api/v1/tts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, language }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const textResp = await res.text();

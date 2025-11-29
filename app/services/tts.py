@@ -5,8 +5,9 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any
 
+import requests
 from fastapi import HTTPException
 
 
@@ -88,3 +89,88 @@ def synthesize_with_piper(text: str, language: Optional[str] = None) -> bytes:
             tmp_path.unlink(missing_ok=True)
         except Exception:
             pass
+
+
+_ELEVENLABS_DEFAULT_VOICES: Dict[str, Dict[str, Any]] = {
+    "pt": {
+        "voice_id": os.getenv("ELEVENLABS_VOICE_ID_PT") or os.getenv("ELEVENLABS_VOICE_ID") or "EXAVITQu4vr4xnSDxMaL",
+        "model_id": os.getenv("ELEVENLABS_MODEL_ID") or "eleven_multilingual_v2",
+        "stability": float(os.getenv("ELEVENLABS_STABILITY", "0.5")),
+        "similarity_boost": float(os.getenv("ELEVENLABS_SIMILARITY", "0.8")),
+        "style": float(os.getenv("ELEVENLABS_STYLE", "0.0")),
+    },
+    "en": {
+        "voice_id": os.getenv("ELEVENLABS_VOICE_ID_EN") or os.getenv("ELEVENLABS_VOICE_ID") or "9BWtsMINqrJLrRacOk9x",
+        "model_id": os.getenv("ELEVENLABS_MODEL_ID") or "eleven_multilingual_v2",
+        "stability": float(os.getenv("ELEVENLABS_STABILITY", "0.5")),
+        "similarity_boost": float(os.getenv("ELEVENLABS_SIMILARITY", "0.8")),
+        "style": float(os.getenv("ELEVENLABS_STYLE", "0.0")),
+    },
+    "es": {
+        "voice_id": os.getenv("ELEVENLABS_VOICE_ID_ES") or os.getenv("ELEVENLABS_VOICE_ID") or "XB0fDUnXU5powFXDhCwa",
+        "model_id": os.getenv("ELEVENLABS_MODEL_ID") or "eleven_multilingual_v2",
+        "stability": float(os.getenv("ELEVENLABS_STABILITY", "0.5")),
+        "similarity_boost": float(os.getenv("ELEVENLABS_SIMILARITY", "0.8")),
+        "style": float(os.getenv("ELEVENLABS_STYLE", "0.0")),
+    },
+}
+
+
+def is_elevenlabs_configured() -> bool:
+    """Check if the ElevenLabs API key is available in env."""
+    return bool(os.getenv("ELEVENLABS_API_KEY"))
+
+
+def _resolve_language(language: Optional[str]) -> str:
+    if not language:
+        return "pt"
+    lang = language.lower()
+    if "-" in lang:
+        lang = lang.split("-", 1)[0]
+    return lang
+
+
+def synthesize_with_elevenlabs(text: str, language: Optional[str] = None) -> bytes:
+    """
+    Call ElevenLabs using the server-side API key so the frontend never needs to expose it.
+    """
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="Texto vazio para síntese.")
+
+    api_key = os.getenv("ELEVENLABS_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="ElevenLabs não configurado no backend.")
+
+    normalized_lang = _resolve_language(language)
+    voice_cfg = _ELEVENLABS_DEFAULT_VOICES.get(normalized_lang) or _ELEVENLABS_DEFAULT_VOICES["pt"]
+
+    payload = {
+        "text": text,
+        "model_id": voice_cfg["model_id"],
+        "voice_settings": {
+            "stability": voice_cfg["stability"],
+            "similarity_boost": voice_cfg["similarity_boost"],
+            "style": voice_cfg["style"],
+            "use_speaker_boost": True,
+        },
+    }
+
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_cfg['voice_id']}"
+    try:
+        response = requests.post(
+            url,
+            headers={
+                "Accept": "audio/mpeg",
+                "Content-Type": "application/json",
+                "xi-api-key": api_key,
+            },
+            json=payload,
+            timeout=30,
+        )
+    except requests.RequestException as exc:  # pragma: no cover - network failures
+        raise HTTPException(status_code=502, detail=f"Erro ao contatar ElevenLabs: {exc}") from exc
+
+    if response.status_code >= 400:
+        raise HTTPException(status_code=502, detail=f"Falha ElevenLabs ({response.status_code}): {response.text[:200]}")
+
+    return response.content

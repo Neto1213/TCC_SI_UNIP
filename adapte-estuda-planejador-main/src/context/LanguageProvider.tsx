@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback, R
 import { languages, type Translations } from '@/i18n';
 import { useElevenLabs } from '@/hooks/useElevenLabs';
 import { fetchTtsAudio } from '@/lib/api';
+import { collectReadableText } from '@/utils/readableText';
 
 export type LanguageCode = 'pt' | 'en' | 'es';
 
@@ -11,16 +12,11 @@ export interface LanguageOption {
   flag: string;
 }
 
-const languageOptions: LanguageOption[] = [
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-];
+// Restrito a português: demais idiomas ficam indisponíveis para a voz/TTS.
+const languageOptions: LanguageOption[] = [{ code: 'pt', name: 'Português', flag: '🇧🇷' }];
 
 const langMap: Record<LanguageCode, string> = {
   pt: 'pt-BR',
-  en: 'en-US',
-  es: 'es-ES',
 };
 
 interface LanguageContextValue {
@@ -40,7 +36,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('pt');
   const [voiceOn, setVoiceOn] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const { isAvailable: elevenLabsAvailable, speakWithElevenLabs } = useElevenLabs();
+  const { isAvailable: elevenLabsAvailable, speakWithElevenLabs, stopElevenLabsAudio } = useElevenLabs();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Load voices once
@@ -74,7 +70,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const chooseVoiceForLanguage = useCallback((langCode: LanguageCode) => {
     if (!voices.length) return null;
-    const target = langMap[langCode];
+    const target = langMap[langCode] || langMap.pt;
     const prefix = target.split('-')[0].toLowerCase();
 
     let v = voices.find(vo => vo.lang && vo.lang.toLowerCase().startsWith(prefix) && /female|femme|mujer|donna|女性/i.test(vo.name));
@@ -90,6 +86,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [voices]);
 
   const stopCurrentAudio = useCallback(() => {
+    // Stop ElevenLabs playback too so new clicks interrupt immediately.
+    stopElevenLabsAudio();
     const audio = audioRef.current;
     if (audio) {
       try {
@@ -100,7 +98,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       audio.src = "";
       audioRef.current = null;
     }
-  }, []);
+  }, [stopElevenLabsAudio]);
 
   useEffect(() => () => {
     stopCurrentAudio();
@@ -152,24 +150,41 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [currentLanguage, playAudioBlob]
   );
 
+  const resolveReadableText = useCallback((fallback?: string) => {
+    // Prioritize explicit text (e.g., hovered/clicked element); when none is provided, read the whole page/selection.
+    const shouldReadPage = !(fallback && fallback.trim());
+    return collectReadableText({ fallback, includePage: shouldReadPage });
+  }, []);
+
+  const extractTextFromNode = useCallback((node?: EventTarget | null) => {
+    if (!node || typeof document === 'undefined') return '';
+    const el = node as HTMLElement;
+    const marked = el.closest?.('[data-elevenlabs-readable]') as HTMLElement | null;
+    const candidate = (marked?.innerText || el.innerText || el.textContent || '').trim();
+    return candidate;
+  }, []);
+
   const speakText = useCallback(async (text: string) => {
-    if (!voiceOn || !text || typeof window === 'undefined') return;
+    if (!voiceOn || typeof window === 'undefined') return;
+
+    const textToSpeak = resolveReadableText(text);
+    if (!textToSpeak) return;
 
     stopCurrentAudio();
     speechSynthesis.cancel();
 
     // Try ElevenLabs first for better quality
     if (elevenLabsAvailable) {
-      const success = await speakWithElevenLabs(text, currentLanguage);
+      const success = await speakWithElevenLabs(textToSpeak, currentLanguage);
       if (success) return;
     }
 
     // Fallback to Piper/self-hosted endpoint
-    const selfHostedOk = await speakWithSelfHosted(text);
+    const selfHostedOk = await speakWithSelfHosted(textToSpeak);
     if (selfHostedOk) return;
 
     // Last fallback: native speech synthesis
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = langMap[currentLanguage];
     const chosen = chooseVoiceForLanguage(currentLanguage);
     if (chosen) utterance.voice = chosen;
@@ -179,7 +194,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.warn('Speech synthesis error:', err);
     }
-  }, [voiceOn, currentLanguage, chooseVoiceForLanguage, elevenLabsAvailable, speakWithElevenLabs, speakWithSelfHosted, stopCurrentAudio]);
+  }, [voiceOn, currentLanguage, chooseVoiceForLanguage, elevenLabsAvailable, speakWithElevenLabs, speakWithSelfHosted, stopCurrentAudio, resolveReadableText]);
 
   const toggleVoice = useCallback(() => {
     setVoiceOn((prev) => {
@@ -192,10 +207,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     });
   }, [stopCurrentAudio]);
   const changeLanguage = useCallback((code: LanguageCode) => {
-    setCurrentLanguage(code);
+    // Mantém português como única língua disponível; ignoramos seleções diferentes.
+    setCurrentLanguage(code === 'pt' ? 'pt' : 'pt');
     speechSynthesis.cancel();
     stopCurrentAudio();
   }, [stopCurrentAudio]);
+
+  useEffect(() => {
+    if (!voiceOn || typeof window === 'undefined') return;
+
+    const handleClickToSpeak = (event: MouseEvent) => {
+      const targetText = extractTextFromNode(event.target);
+      const resolved = resolveReadableText(targetText);
+      if (resolved) {
+        speakText(resolved);
+      }
+    };
+
+    // Lê o conteúdo clicado (inclui textos carregados dinamicamente do DOM).
+    window.addEventListener('click', handleClickToSpeak, true);
+    return () => {
+      window.removeEventListener('click', handleClickToSpeak, true);
+    };
+  }, [voiceOn, extractTextFromNode, resolveReadableText, speakText]);
 
   const texts = useMemo(() => languages[currentLanguage] || languages.en, [currentLanguage]);
 
