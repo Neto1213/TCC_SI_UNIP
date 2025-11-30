@@ -14,8 +14,8 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
 
-def create_user(db: Session, *, email: str, password: str) -> User:
-    user = User(email=email, hashed_password=hash_password(password))
+def create_user(db: Session, *, email: str, password: str, name: str | None = None) -> User:
+    user = User(email=email, username=name, hashed_password=hash_password(password))
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -30,3 +30,11 @@ def authenticate_user(db: Session, *, email: str, password: str) -> Optional[Use
         return None
     return user
 
+
+def update_user_password(db: Session, user: User, new_password: str) -> User:
+    """Atualiza a senha aplicando o mesmo hashing usado no cadastro/login."""
+    user.hashed_password = hash_password(new_password)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user

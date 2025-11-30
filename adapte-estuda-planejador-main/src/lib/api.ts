@@ -134,11 +134,15 @@ function authHeaders(extra?: Record<string, string>) {
   return { ...(base as any), ...(extra || {}) } as Record<string, string>;
 }
 
-export async function register(email: string, password: string): Promise<{ access_token: string; token_type: string }> {
+export async function register(
+  email: string,
+  password: string,
+  name?: string
+): Promise<{ access_token: string; token_type: string }> {
   const res = await fetch(`${API_BASE}/api/v1/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, name }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -162,6 +166,42 @@ export async function login(email: string, password: string): Promise<{ access_t
   const data = await res.json();
   setToken(data.access_token);
   return data;
+}
+
+export async function requestPasswordReset(email: string): Promise<{ message: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Falha ao solicitar recuperação (${res.status}): ${text}`);
+  }
+  return res.json();
+}
+
+export async function validateResetToken(
+  token: string
+): Promise<{ valid: boolean; user_id?: number; email?: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/auth/validate-reset-token?token=${encodeURIComponent(token)}`);
+  if (!res.ok) {
+    return { valid: false };
+  }
+  return res.json();
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, new_password: newPassword }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Falha ao trocar a senha (${res.status}): ${text}`);
+  }
+  return res.json();
 }
 
 export async function predictPlan(payload: PredictPlanRequest, signal?: AbortSignal): Promise<PredictPlanResponse> {

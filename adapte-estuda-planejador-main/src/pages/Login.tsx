@@ -58,6 +58,15 @@ export default function Login() {
               onChange={(e) => setSenha(e.target.value)}
               required
             />
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-learning-primary hover:text-learning-primary/80 transition-colors"
+                onMouseEnter={() => speakText("Esqueci minha senha")}
+              >
+                Esqueci minha senha
+              </Link>
+            </div>
           </div>
 
           <Button

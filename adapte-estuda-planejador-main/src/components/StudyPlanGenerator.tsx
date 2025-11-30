@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { BehavioralProfile } from "./BehavioralProfile";
 import { StudyPlan } from "./StudyPlanForm";
@@ -21,6 +21,7 @@ import {
   Star,
   CircleCheckBig,
 } from "lucide-react";
+import { useAccessibility } from "@/hooks/useAccessibility";
 
 const boardPresets: Record<string, string[]> = {
   prova: ["A estudar", "Em revisão", "Dominei"],
@@ -84,6 +85,8 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
   onNotesSaved,
 }) => {
   const { texts, speakText } = useLanguage();
+  const { accessibilityMode, announce } = useAccessibility();
+  const dragLocationRef = useRef<string | null>(null);
 
   useEffect(() => {
     speakText(`${texts.studyPlanKanban}. ${texts.learningJourneyProgressiveStages}`);
@@ -184,8 +187,32 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
     }
   }, [allTasks, selectedTask]);
 
-  const onDragEnd = (result: any) => {
-    if (!result.destination) return;
+  const handleDragStart = (start: any) => {
+    dragLocationRef.current = `${start?.source?.droppableId || ""}-${start?.source?.index ?? ""}`;
+    if (!accessibilityMode) return;
+    const task = columns[start?.source?.droppableId]?.tasks?.[start?.source?.index];
+    if (task) {
+      announce(`Item ${task.title} selecionado para arrastar.`);
+    }
+  };
+
+  const handleDragUpdate = (update: any) => {
+    if (!accessibilityMode || !update.destination) return;
+    const locationKey = `${update.destination.droppableId}-${update.destination.index}`;
+    if (locationKey === dragLocationRef.current) return;
+    dragLocationRef.current = locationKey;
+    const columnName = columnTitleMap[update.destination.droppableId] || update.destination.droppableId;
+    const destinationTasks = columns[update.destination.droppableId]?.tasks || [];
+    const previousTask = destinationTasks[update.destination.index - 1];
+    const relativePosition = previousTask ? `Posicionado abaixo de ${previousTask.title}.` : "Posicionado no topo.";
+    announce(`Movendo para ${columnName}. ${relativePosition}`);
+  };
+
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) {
+      dragLocationRef.current = null;
+      return;
+    }
     const { source, destination } = result;
     const sourceColumn = columns[source.droppableId];
     const destColumn = columns[destination.droppableId];
@@ -224,6 +251,12 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
 
     setColumns(updatedColumns);
     onUpdateColumns?.(updatedColumns);
+
+    if (accessibilityMode) {
+      const columnName = columnTitleMap[destination.droppableId] || destination.droppableId;
+      announce(`Item ${removed.title} movido para ${columnName}, posição ${destination.index + 1}.`);
+    }
+    dragLocationRef.current = null;
 
     if (serverPlanId) {
       const planNumericId = Number(serverPlanId);
@@ -424,7 +457,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
         </div>
       )}
 
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragStart={handleDragStart} onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {presetColumns.map(({ id, title }) => {
             const column = columns[id] || { id, title, tasks: [] };
@@ -462,8 +495,9 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
                               <Card
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
+                                {...provided.dragHandleProps}
                                 onClick={() => openTaskModal(task)}
-                                className={`cursor-grab border-l-4 transition ${
+                                className={`cursor-grab active:cursor-grabbing border-l-4 transition ${
                                   snapshot.isDragging ? 'shadow-lg rotate-1 scale-[1.01]' : 'hover:shadow-md'
                                 } ${isInProgress ? 'border-l-learning-warning' : ''} ${
                                   isCompleted ? 'border-l-learning-success' : ''
@@ -475,7 +509,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
                                 <CardContent className="p-4 space-y-3">
                                   <div className="flex items-start justify-between gap-2">
                                     <div className="flex items-center gap-2">
-                                      <div {...provided.dragHandleProps} className="text-muted-foreground hover:text-foreground">
+                                      <div className="text-muted-foreground hover:text-foreground">
                                         <GripVertical className="h-4 w-4" />
                                       </div>
                                       <div>

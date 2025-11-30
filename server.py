@@ -1,9 +1,11 @@
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional, List
 import asyncio
 from contextlib import asynccontextmanager
 from dataclasses import asdict
 
+import jwt
 from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
@@ -34,7 +36,15 @@ import app.models.plan  # noqa: F401
 import app.models.card  # noqa: F401
 from app.db_migrations import run_sql_migrations
 from app.deps import get_db, get_current_user, get_current_user_optional
-from app.schemas.user import UserCreate, UserLogin, UserOut, Token
+from app.schemas.user import (
+    UserCreate,
+    UserLogin,
+    UserOut,
+    Token,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    ResetTokenValidationResponse,
+)
 from app.schemas.plan import (
     PlanCreate,
     PlanOut,
@@ -43,7 +53,13 @@ from app.schemas.plan import (
     StudyCard,
     StudyPlanResponse,
 )
-from app.crud.user import create_user as crud_create_user, authenticate_user
+from app.crud.user import (
+    create_user as crud_create_user,
+    authenticate_user,
+    get_user_by_email,
+    update_user_password,
+    get_user,
+)
 from app.crud.plan import (
     create_plan as crud_create_plan,
     create_plan_with_cards,
@@ -52,13 +68,21 @@ from app.crud.plan import (
     list_cards,
     get_plan_card_by_identifier,
 )
-from app.security import create_access_token
+from app.security import (
+    create_access_token,
+    create_reset_password_token,
+    decode_reset_password_token,
+)
 from app.services.plan_transformer import transform_ai_plan
 from app.services.tts import synthesize_with_piper, synthesize_with_elevenlabs, is_elevenlabs_configured
+from SMTP.email_service import send_password_reset_email
 
 
 MODEL_PATH = "models/studyplan_pipeline.joblib"
 ARTIFACT_PLAN_PATH = "artifacts/plano_estudos.json"
+FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:5173")
+RESET_PASSWORD_URL = os.getenv("FRONTEND_RESET_URL", f"{FRONTEND_BASE_URL.rstrip('/')}/reset-password")
+FORGOT_PASSWORD_GENERIC_MSG = "Se este e-mail estiver cadastrado, enviaremos um link de recuperação."
 
 
 class BehavioralProfileIn(BaseModel):
@@ -167,6 +191,13 @@ def _card_model_to_schema(card) -> StudyCard:
         raw=card.raw or {},
         notes=card.notes,
     )
+
+
+def _build_reset_link(token: str) -> str:
+    """Monta o link de reset apontando para o front configurado."""
+    base = RESET_PASSWORD_URL.rstrip("/")
+    sep = "&" if "?" in base else "?"
+    return f"{base}{sep}token={token}"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -406,15 +437,61 @@ def plan_cards(body: PlanJSONIn) -> Dict[str, Any]:
 
 
 # ---------- Auth ----------
+# Fluxo de reset de senha: geração, validação e troca de senha via token curto de e-mail.
+@app.post("/api/v1/auth/forgot-password")
+def forgot_password(body: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, body.email)
+    if not user:
+        return {"message": FORGOT_PASSWORD_GENERIC_MSG}
+
+    token = create_reset_password_token(user_id=user.id, email=user.email)
+    reset_link = _build_reset_link(token)
+    try:
+        send_password_reset_email(user.email, reset_link)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Não foi possível enviar o e-mail de recuperação") from exc
+
+    return {"message": FORGOT_PASSWORD_GENERIC_MSG}
+
+
+@app.get("/api/v1/auth/validate-reset-token", response_model=ResetTokenValidationResponse)
+def validate_reset_token(token: str):
+    try:
+        payload = decode_reset_password_token(token)
+    except jwt.ExpiredSignatureError:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"valid": False})
+    except jwt.PyJWTError:
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"valid": False})
+
+    return ResetTokenValidationResponse(valid=True, user_id=int(payload.get("sub")), email=payload.get("email"))
+
+
+@app.post("/api/v1/auth/reset-password")
+def reset_password(body: ResetPasswordRequest, db: Session = Depends(get_db)):
+    try:
+        payload = decode_reset_password_token(body.token)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expirado")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token inválido")
+
+    user_id = int(payload.get("sub"))
+    email = payload.get("email")
+    user = get_user(db, user_id)
+    if not user or user.email != email:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token inválido")
+
+    update_user_password(db, user, body.new_password)
+    return {"message": "Senha alterada com sucesso"}
+
+
 @app.post("/api/v1/auth/register", response_model=Token)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     existing = authenticate_user(db, email=user_in.email, password=user_in.password)
     # acima retorna None se não existe ou senha errada; mas precisamos checar existência direta
-    from app.crud.user import get_user_by_email
-
     if get_user_by_email(db, user_in.email):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="E-mail já registrado")
-    user = crud_create_user(db, email=user_in.email, password=user_in.password)
+    user = crud_create_user(db, email=user_in.email, password=user_in.password, name=user_in.name)
     token = create_access_token(user_id=user.id)
     return Token(access_token=token)
 
@@ -434,9 +511,18 @@ def auth_me(current_user=Depends(get_current_user)):
     Retorna os dados do usuário autenticado usando o token JWT atual.
     Incluímos um campo 'name' derivado do e-mail quando não houver nome explícito.
     """
-    user_out = UserOut.model_validate(current_user)
-    derived_name = user_out.name or (current_user.email.split("@")[0].title() if current_user.email else None)
-    return user_out.model_copy(update={"name": derived_name})
+    derived_name = (
+        current_user.username
+        or (current_user.email.split("@")[0].title() if current_user.email else None)
+    )
+    return UserOut.model_validate(
+        {
+            "id": current_user.id,
+            "email": current_user.email,
+            "name": derived_name,
+            "created_at": current_user.created_at,
+        }
+    )
 
 
 # ---------- Plans CRUD ----------

@@ -42,3 +42,29 @@ def create_access_token(*, user_id: int) -> str:
 
 def decode_token(token: str) -> dict[str, Any]:
     return jwt.decode(token, get_jwt_secret(), algorithms=[get_jwt_alg()])
+
+
+# --- Password reset tokens (short-lived JWT dedicated to resets) ---
+def get_reset_token_exp_minutes() -> int:
+    try:
+        return int(os.getenv("RESET_TOKEN_EXPIRE_MINUTES", "60"))
+    except Exception:
+        return 60
+
+
+def create_reset_password_token(*, user_id: int, email: str) -> str:
+    expire = datetime.now(timezone.utc) + timedelta(minutes=get_reset_token_exp_minutes())
+    payload = {
+        "sub": str(user_id),
+        "email": email,
+        "purpose": "password_reset",
+        "exp": expire,
+    }
+    return jwt.encode(payload, get_jwt_secret(), algorithm=get_jwt_alg())
+
+
+def decode_reset_password_token(token: str) -> dict[str, Any]:
+    data = jwt.decode(token, get_jwt_secret(), algorithms=[get_jwt_alg()])
+    if data.get("purpose") != "password_reset":
+        raise jwt.InvalidTokenError("Tipo de token inválido para reset de senha")
+    return data

@@ -1,0 +1,113 @@
+/* Regras de acessibilidade aplicadas quando o modo acessível está ativo. */
+body.accessibility-high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 0 0% 90%;
+  --border: 50 98% 50%;
+  --ring: 50 98% 50%;
+  --primary: 50 98% 50%;
+  --primary-foreground: 0 0% 0%;
+  background-color: #000;
+  color: #fff;
+  font-size: 1.06em;
+}
+
+body.accessibility-high-contrast ::selection {
+  background: #fbbf24;
+  color: #000;
+}
+
+body.accessibility-high-contrast :focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 3px #f1f5f9, 0 0 0 6px #fbbf24;
+}
+
+body.accessibility-high-contrast button,
+body.accessibility-high-contrast [role="button"],
+body.accessibility-high-contrast input,
+body.accessibility-high-contrast select,
+body.accessibility-high-contrast textarea {
+  font-size: 1.06em;
+  border-width: 2px;
+  border-color: #fbbf24 !important;
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.4);
+}
+
+body.accessibility-high-contrast .accessibility-outline,
+body.accessibility-high-contrast .card,
+body.accessibility-high-contrast .popover,
+body.accessibility-high-contrast .dropdown-menu {
+  border-color: #fbbf24 !important;
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.65);
+}
+
+body.accessibility-high-contrast .card {
+  font-size: 1.08em;
+  background-color: #fff !important;
+}
+
+body.accessibility-high-contrast .card .text-xs {
+  font-size: 1rem;
+}
+
+body.accessibility-high-contrast .card .text-sm {
+  font-size: 1.12rem;
+}
+
+body.accessibility-high-contrast .card *,
+body.accessibility-high-contrast .popover *,
+body.accessibility-high-contrast .dropdown-menu * {
+  color: #000 !important;
+}
+
+body.accessibility-high-contrast .badge,
+body.accessibility-high-contrast .Badge,
+body.accessibility-high-contrast .badge:not(.badge-destructive) {
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #fbbf24 !important;
+}
+
+body.accessibility-high-contrast .card .badge,
+body.accessibility-high-contrast .card .Badge {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+body.accessibility-high-contrast .text-muted-foreground,
+body.accessibility-high-contrast .text-sm.text-muted-foreground,
+body.accessibility-high-contrast .text-xs.text-muted-foreground {
+  color: #e5e7eb !important;
+}
+
+body.accessibility-high-contrast [data-sidebar="sidebar"] {
+  background-color: #000;
+  color: #fff;
+  border-color: #fbbf24;
+}
+
+body.accessibility-high-contrast [data-sidebar="menu-button"],
+body.accessibility-high-contrast [data-sidebar="menu-sub-button"],
+body.accessibility-high-contrast [data-sidebar="group-action"],
+body.accessibility-high-contrast [data-sidebar="menu-action"],
+body.accessibility-high-contrast [data-sidebar="trigger"] {
+  background-color: #fff !important;
+  color: #000 !important;
+  border-color: #fbbf24 !important;
+}
+
+body.accessibility-high-contrast [data-sidebar="group-label"],
+body.accessibility-high-contrast [data-sidebar="group"],
+body.accessibility-high-contrast [data-sidebar="menu"] {
+  color: #fff;
+}

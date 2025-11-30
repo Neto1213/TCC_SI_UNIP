@@ -150,7 +150,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks }) => {
                           <Card
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`cursor-pointer hover:shadow-md transition-shadow ${
+                            {...provided.dragHandleProps}
+                            className={`cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${
                               snapshot.isDragging ? 'shadow-lg rotate-2' : ''
                             }`}
                           >
@@ -159,7 +160,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks }) => {
                                 <CardTitle className="text-sm font-medium">
                                   #{task.number} {task.title}
                                 </CardTitle>
-                                <div {...provided.dragHandleProps}>
+                                <div>
                                   <GripVertical className="h-4 w-4 text-muted-foreground" />
                                 </div>
                               </div>

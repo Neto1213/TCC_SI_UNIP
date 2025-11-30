@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    name: str | None = None
 
 
 class UserLogin(BaseModel):
@@ -28,3 +29,18 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: int
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+
+class ResetTokenValidationResponse(BaseModel):
+    valid: bool
+    user_id: int | None = None
+    email: EmailStr | None = None

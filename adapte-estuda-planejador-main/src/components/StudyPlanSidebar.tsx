@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAccessibility } from "@/hooks/useAccessibility";
 import {
   Select,
   SelectContent,
@@ -60,6 +61,14 @@ export function StudyPlanSidebar({
     languageOptions,
     texts,
   } = useLanguage();
+  const { accessibilityMode, toggleAccessibilityMode } = useAccessibility();
+
+  const combinedVoiceAccessibilityOn = voiceOn || accessibilityMode;
+  const handleToggleVoiceAndAccessibility = () => {
+    const target = !(voiceOn && accessibilityMode); // turn both on unless they're already on together
+    if (voiceOn !== target) toggleVoice();
+    if (accessibilityMode !== target) toggleAccessibilityMode();
+  };
 
   const formatDate = (value?: number | string | null) => {
     if (!value && value !== 0) return "--";
@@ -154,12 +163,12 @@ export function StudyPlanSidebar({
       <SidebarFooter className="border-t px-2 py-3">
         {isCollapsed ? (
           <Button
-            onClick={toggleVoice}
-            variant={voiceOn ? "default" : "outline"}
+            onClick={handleToggleVoiceAndAccessibility}
+            variant={combinedVoiceAccessibilityOn ? "default" : "outline"}
             size="icon"
             className="w-8 h-8"
           >
-            {voiceOn ? (
+            {combinedVoiceAccessibilityOn ? (
               <Volume2 className="w-4 h-4" />
             ) : (
               <VolumeX className="w-4 h-4" />
@@ -168,17 +177,17 @@ export function StudyPlanSidebar({
         ) : (
           <div className="flex flex-col gap-2 w-full">
             <Button
-              onClick={toggleVoice}
-              variant={voiceOn ? "default" : "outline"}
+              onClick={handleToggleVoiceAndAccessibility}
+              variant={combinedVoiceAccessibilityOn ? "default" : "outline"}
               size="sm"
               className="w-full justify-start gap-2"
             >
-              {voiceOn ? (
+              {combinedVoiceAccessibilityOn ? (
                 <Volume2 className="w-4 h-4" />
               ) : (
                 <VolumeX className="w-4 h-4" />
               )}
-              {texts.toggleVoice}
+              Acessibilidade
             </Button>
 
             <div className="flex items-center gap-2 w-full">

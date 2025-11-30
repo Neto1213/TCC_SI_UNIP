@@ -18,7 +18,7 @@ export default function Cadastro() {
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(email, senha);
+      await register(email, senha, nome);
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
       alert(err?.message || "Falha no cadastro");
