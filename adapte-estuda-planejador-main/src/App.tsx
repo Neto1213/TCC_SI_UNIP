@@ -99,6 +99,14 @@ const App = () => (
                     </PublicOnlyRoute>
                   }
                 />
+                <Route
+                  path="/reset-password/:token"
+                  element={
+                    <PublicOnlyRoute>
+                      <ResetPassword />
+                    </PublicOnlyRoute>
+                  }
+                />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

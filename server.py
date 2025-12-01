@@ -81,6 +81,7 @@ from SMTP.email_service import send_password_reset_email
 MODEL_PATH = "models/studyplan_pipeline.joblib"
 ARTIFACT_PLAN_PATH = "artifacts/plano_estudos.json"
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:5173")
+# Pode apontar para a rota base de reset (ex.: https://meusite.com/reset-password) ou incluir {token} para interpolar.
 RESET_PASSWORD_URL = os.getenv("FRONTEND_RESET_URL", f"{FRONTEND_BASE_URL.rstrip('/')}/reset-password")
 FORGOT_PASSWORD_GENERIC_MSG = "Se este e-mail estiver cadastrado, enviaremos um link de recuperação."
 
@@ -195,9 +196,19 @@ def _card_model_to_schema(card) -> StudyCard:
 
 def _build_reset_link(token: str) -> str:
     """Monta o link de reset apontando para o front configurado."""
-    base = RESET_PASSWORD_URL.rstrip("/")
-    sep = "&" if "?" in base else "?"
-    return f"{base}{sep}token={token}"
+    base = (RESET_PASSWORD_URL or f"{FRONTEND_BASE_URL.rstrip('/')}/reset-password").rstrip("/")
+
+    # Se o usuário configurar um placeholder explícito no .env, usamos diretamente.
+    if "{token}" in base:
+        return base.replace("{token}", token)
+
+    # Se a URL já vier com query string, anexamos como param (?token=... / &token=...)
+    if "?" in base:
+        sep = "&" if base.count("?") == 1 and not base.endswith("?") else ""
+        return f"{base}{sep}token={token}"
+
+    # Padrão: usa segmento de path, resultando em /reset-password/<token>
+    return f"{base}/{token}"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

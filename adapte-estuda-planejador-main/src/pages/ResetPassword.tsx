@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 // Tela de redefinição que valida o token e aplica a nova senha.
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token") || "";
+  const { token: tokenFromParams } = useParams<{ token: string }>();
+  const token = searchParams.get("token") || tokenFromParams || "";
   const [validating, setValidating] = useState(true);
   const [tokenValid, setTokenValid] = useState(false);
   const [password, setPassword] = useState("");

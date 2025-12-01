@@ -10,6 +10,7 @@ SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 SMTP_FROM_NAME = os.getenv("SMTP_FROM_NAME", "Minha App")
 SMTP_FROM_EMAIL = os.getenv("SMTP_FROM_EMAIL", SMTP_USER)
+FRONTEND_RESET_URL = os.getenv("FRONTEND_RESET_URL", "http://localhost:5173/reset-password")
 
 
 def send_email(to_email: str, subject: str, html_body: str, text_body: str | None = None):
@@ -64,13 +65,25 @@ def _build_reset_email_html(reset_link: str) -> str:
 """
 
 
-def send_password_reset_email(user_email: str, reset_link: str):
+def _default_reset_link(token: str) -> str:
+    """Gera link de reset estilo /reset-password/<token> se apenas a base estiver configurada."""
+    base = FRONTEND_RESET_URL.rstrip("/")
+    if "{token}" in base:
+        return base.replace("{token}", token)
+    return f"{base}/{token}"
+
+
+def send_password_reset_email(user_email: str, reset_link: str | None = None, token: str | None = None):
     subject = "Recuperação de senha"
+    final_link = reset_link or (token and _default_reset_link(token))
+    if not final_link:
+        raise RuntimeError("Um reset_link ou token precisa ser informado para o e-mail de recuperação.")
+
     text_body = (
         "Você solicitou a redefinição de senha.\n"
         "Use o link abaixo (ou o botão, se disponível):\n"
-        f"{reset_link}\n\n"
+        f"{final_link}\n\n"
         "Se você não solicitou, ignore este e-mail."
     )
-    html_body = _build_reset_email_html(reset_link)
+    html_body = _build_reset_email_html(final_link)
     send_email(user_email, subject, html_body, text_body)

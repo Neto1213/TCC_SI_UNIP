@@ -22,7 +22,7 @@ templates = Jinja2Templates(directory="templates")
 # Config
 FRONTEND_RESET_URL = os.getenv(
     "FRONTEND_RESET_URL",
-    "http://localhost:8000/reset-senha"
+    "http://127.0.0.1:8080/reset-password"
 )
 
 # Banco fake na memória (apenas para testes)
