@@ -539,7 +539,7 @@ def auth_me(current_user=Depends(get_current_user)):
 # ---------- Plans CRUD ----------
 @app.get("/api/v1/plans", response_model=List[PlanOut])
 def list_plans(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    plans = list_user_plans(db, user_id=current_user.id)
+    plans = list_user_plans(db, user_id=current_user.id) or []
     for plan in plans:
         if plan.data is None and plan.raw_response:
             plan.data = plan.raw_response

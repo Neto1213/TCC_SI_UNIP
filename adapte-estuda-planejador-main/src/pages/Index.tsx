@@ -5,6 +5,7 @@ import { Task as KanbanTask } from "@/components/StudyPlanGenerator";
 import LoadingMonkey from "@/components/LoadingMonkey";
 import StudyPlanWelcome from "@/components/StudyPlanWelcome";
 import StudyPlanWorkspace from "@/components/StudyPlanWorkspace";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -19,7 +20,7 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 
-type AppStep = 'welcome' | 'profile' | 'plan' | 'loading' | 'result';
+type AppStep = 'welcome' | 'profile' | 'plan' | 'loading' | 'result' | 'empty';
 
 type ServerPlan = PlanSummary;
 
@@ -206,6 +207,11 @@ const Index = () => {
         setCurrentStep("result");
       } catch (err: any) {
         setBackendError(err?.message || "Falha ao carregar plano salvo");
+        setCurrentPlanData(null);
+        setStudyPlan(null);
+        setInitialTasks(undefined);
+        setSelectedServerPlanId(null);
+        setCurrentStep("empty");
       }
     },
     [buildBehavioralFromPlan, buildStudyPlanFromMeta, tasksFromCards, planHoursMap]
@@ -232,7 +238,7 @@ const Index = () => {
         if (filtered.length === 0) {
           setSelectedServerPlanId(null);
           if (navigationMode === "existing") {
-            setCurrentStep("welcome");
+            setCurrentStep("empty");
           }
         }
 
@@ -438,6 +444,30 @@ const Index = () => {
 
   if (currentStep === 'loading') {
     return <LoadingMonkey message="Gerando seu plano de estudos personalizado..." />;
+  }
+
+  if (currentStep === 'empty') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-learning-primary/5 px-4">
+        <div className="bg-card/80 backdrop-blur border border-border rounded-xl shadow-[var(--shadow-card)] p-8 max-w-md text-center space-y-4">
+          <p className="text-xl font-semibold text-foreground">Você ainda não possui nenhum plano gerado.</p>
+          {backendError && (
+            <p className="text-sm text-destructive">Detalhes: {backendError}</p>
+          )}
+          <p className="text-sm text-muted-foreground">
+            Crie um novo plano para visualizar aqui. É rápido e personalizado ao seu perfil.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => navigate("/plano-de-estudo/novo")} className="gap-2">
+              Criar meu primeiro plano
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/dashboard")}>
+              Voltar ao dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (currentStep === 'result' && behavioralProfile && studyPlan) {

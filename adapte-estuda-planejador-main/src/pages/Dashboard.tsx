@@ -7,6 +7,7 @@ import { ArrowRight, BookOpenCheck, LayoutDashboard, LogOut, Settings } from "lu
 import { listPlans, type PlanSummary } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -15,6 +16,8 @@ const Dashboard = () => {
   const [latestPlan, setLatestPlan] = useState<PlanSummary | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(true);
   const [plansError, setPlansError] = useState<string | null>(null);
+  const [checkingPlans, setCheckingPlans] = useState(false);
+  const { toast } = useToast();
 
   // Carrega o plano mais recente sempre que o usuário abre o dashboard.
   useEffect(() => {
@@ -56,7 +59,34 @@ const Dashboard = () => {
   }, [latestPlan]);
 
   const goToPlannerNew = () => navigate("/plano-de-estudo/novo");
-  const goToPlannerExisting = () => navigate("/plano-de-estudo");
+  const goToPlannerExisting = async () => {
+    setCheckingPlans(true);
+    try {
+      const plans = await listPlans();
+      const normalized = Array.isArray(plans) ? plans : [];
+      if (!normalized.length) {
+        setLatestPlan(null);
+        toast({
+          title: "Você ainda não possui planos gerados.",
+          description: "Crie um novo plano para visualizar aqui.",
+        });
+        return;
+      }
+      setPlansError(null);
+      setLatestPlan(normalized[0]);
+      navigate("/plano-de-estudo");
+    } catch (error: any) {
+      const message = error?.message || "Não foi possível carregar seus planos.";
+      setPlansError(message);
+      toast({
+        title: "Falha ao abrir planos",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setCheckingPlans(false);
+    }
+  };
   const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
@@ -107,6 +137,7 @@ const Dashboard = () => {
                 variant="secondary"
                 className="justify-between"
                 onClick={goToPlannerExisting}
+                disabled={checkingPlans}
                 onMouseEnter={() => speakText("Ir para meus planos")}
               >
                 <span>Meus planos</span>

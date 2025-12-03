@@ -1,1 +1,129 @@
-{"tema":"javascript","perfil_label":"T1","estilo":"T","nivel":1,"objetivo":"prova","carga_horas_semana":20,"semanas":4,"plano":[{"semana":1,"objetivo_semana":"Introdução ao JavaScript","topicos":["Sintaxe básica","Tipos de dados","Operadores"],"tarefas":[{"id":"task-1","title":"Estudar sintaxe básica","type":"teoria","hours":"3h","description":"Descricao: Aprender a sintaxe básica do JavaScript, incluindo variáveis e funções.\n\nComo fazer: rever anotações, fazer 5 exercícios, validar respostas."},{"id":"task-2","title":"Explorar tipos de dados","type":"teoria","hours":"2h","description":"Descricao: Compreender os diferentes tipos de dados em JavaScript e suas aplicações.\n\nComo fazer: ler material, criar exemplos, discutir com colegas."},{"id":"task-3","title":"Praticar operadores","type":"prática","hours":"2h","description":"Descricao: Praticar o uso de operadores em JavaScript através de exercícios.\n\nComo fazer: resolver 10 exercícios, revisar soluções, aplicar em projetos."},{"id":"task-4","title":"Revisar conceitos","type":"resumo","hours":"1h","description":"Descricao: Revisar os conceitos aprendidos na semana para fixação.\n\nComo fazer: criar um resumo, discutir com um amigo, fazer um quiz."}],"referencias":[{"titulo":"MDN Web Docs - JavaScript","url":"https://developer.mozilla.org/pt-BR/docs/Web/JavaScript"},{"titulo":"Eloquent JavaScript","url":"https://eloquentjavascript.net/"}]},{"semana":2,"objetivo_semana":"Estruturas de controle","topicos":["Condicionais","Laços de repetição","Funções"],"tarefas":[{"id":"task-5","title":"Estudar condicionais","type":"teoria","hours":"3h","description":"Descricao: Aprender sobre estruturas condicionais e sua utilização em JavaScript.\n\nComo fazer: ler material, fazer 5 exercícios, discutir exemplos."},{"id":"task-6","title":"Praticar laços de repetição","type":"prática","hours":"3h","description":"Descricao: Praticar o uso de laços de repetição em JavaScript com exercícios práticos.\n\nComo fazer: resolver 10 exercícios, revisar soluções, aplicar em projetos."},{"id":"task-7","title":"Explorar funções","type":"teoria","hours":"2h","description":"Descricao: Compreender a definição e chamada de funções em JavaScript.\n\nComo fazer: ler material, criar funções, discutir com colegas."},{"id":"task-8","title":"Revisar estruturas de controle","type":"resumo","hours":"1h","description":"Descricao: Revisar os conceitos de estruturas de controle para fixação.\n\nComo fazer: criar um resumo, discutir com um amigo, fazer um quiz."}],"referencias":[{"titulo":"MDN Web Docs - Estruturas de Controle","url":"https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"},{"titulo":"JavaScript.info - Funções","url":"https://javascript.info/function-basics"}]},{"semana":3,"objetivo_semana":"Manipulação do DOM","topicos":["Seletores","Eventos","Alteração de elementos"],"tarefas":[{"id":"task-9","title":"Estudar seletores","type":"teoria","hours":"3h","description":"Descricao: Aprender sobre seletores do DOM e como acessá-los com JavaScript.\n\nComo fazer: ler material, fazer 5 exercícios, validar respostas."},{"id":"task-10","title":"Praticar eventos","type":"prática","hours":"3h","description":"Descricao: Praticar a manipulação de eventos no DOM com exercícios práticos.\n\nComo fazer: resolver 10 exercícios, revisar soluções, aplicar em projetos."},{"id":"task-11","title":"Alterar elementos do DOM","type":"prática","hours":"3h","description":"Descricao: Aprender a alterar elementos do DOM usando JavaScript.\n\nComo fazer: criar exemplos, discutir com colegas, aplicar em projetos."},{"id":"task-12","title":"Revisar manipulação do DOM","type":"resumo","hours":"1h","description":"Descricao: Revisar os conceitos de manipulação do DOM para fixação.\n\nComo fazer: criar um resumo, discutir com um amigo, fazer um quiz."}],"referencias":[{"titulo":"MDN Web Docs - DOM","url":"https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model"},{"titulo":"JavaScript.info - DOM","url":"https://javascript.info/dom"}]},{"semana":4,"objetivo_semana":"Projetos práticos e revisão","topicos":["Projetos simples","Revisão geral","Simulados"],"tarefas":[{"id":"task-13","title":"Desenvolver projeto simples","type":"prática","hours":"4h","description":"Descricao: Criar um projeto simples utilizando os conceitos aprendidos em JavaScript.\n\nComo fazer: planejar o projeto, codificar, testar e revisar."},{"id":"task-14","title":"Revisar conteúdo","type":"resumo","hours":"3h","description":"Descricao: Revisar todo o conteúdo abordado nas semanas anteriores.\n\nComo fazer: criar um resumo, discutir com um amigo, fazer um quiz."},{"id":"task-15","title":"Realizar simulados
+{
+  "tema": "python",
+  "perfil_label": "P1",
+  "estilo": "P",
+  "nivel": 1,
+  "objetivo": "habito",
+  "carga_horas_semana": 20,
+  "semanas": 4,
+  "plano": [
+    {
+      "semana": 1,
+      "objetivo_semana": "Introdução ao Python",
+      "topicos": [
+        "Instalação do Python",
+        "Sintaxe básica",
+        "Tipos de dados"
+      ],
+      "tarefas": [
+        {
+          "id": "task-1",
+          "title": "Instalar Python",
+          "type": "pratica",
+          "hours": "2h",
+          "description": "Descricao: Instalar o Python e configurar o ambiente de desenvolvimento.\n\nComo fazer: baixar instalador, seguir instruções, verificar instalação."
+        },
+        {
+          "id": "task-2",
+          "title": "Estudar sintaxe básica",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Compreender a sintaxe básica do Python e suas regras.\n\nComo fazer: ler documentação, fazer anotações, praticar exemplos."
+        },
+        {
+          "id": "task-3",
+          "title": "Tipos de dados",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Aprender sobre os tipos de dados em Python e suas operações.\n\nComo fazer: revisar tipos, fazer exercícios, validar respostas."
+        },
+        {
+          "id": "task-4",
+          "title": "Exercícios práticos",
+          "type": "pratica",
+          "hours": "4h",
+          "description": "Descricao: Realizar exercícios práticos para fixar o conteúdo aprendido.\n\nComo fazer: resolver 5 exercícios, revisar soluções, discutir com colegas."
+        },
+        {
+          "id": "task-5",
+          "title": "Revisão da semana",
+          "type": "teoria",
+          "hours": "2h",
+          "description": "Descricao: Revisar todo o conteúdo estudado na semana.\n\nComo fazer: reler anotações, fazer um resumo, testar conhecimentos."
+        },
+        {
+          "id": "task-6",
+          "title": "Leitura complementar",
+          "type": "leitura",
+          "hours": "1h",
+          "description": "Descricao: Ler material complementar sobre Python.\n\nComo fazer: escolher um artigo, fazer anotações, discutir com colegas."
+        },
+        {
+          "id": "task-7",
+          "title": "Micro-hábitos diários",
+          "type": "consistencia",
+          "hours": "1h",
+          "description": "Descricao: Praticar micro-hábitos diários para fixar o aprendizado.\n\nComo fazer: resolver 1 exercício, revisar anotações, programar 10 min."
+        }
+      ],
+      "referencias": [
+        {
+          "titulo": "Documentação do Python",
+          "url": "https://docs.python.org/3/"
+        }
+      ]
+    },
+    {
+      "semana": 2,
+      "objetivo_semana": "Controle de fluxo e funções",
+      "topicos": [
+        "Estruturas condicionais",
+        "Laços de repetição",
+        "Funções"
+      ],
+      "tarefas": [
+        {
+          "id": "task-8",
+          "title": "Estudar estruturas condicionais",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Compreender como funcionam as estruturas condicionais em Python.\n\nComo fazer: ler exemplos, praticar, fazer exercícios."
+        },
+        {
+          "id": "task-9",
+          "title": "Laços de repetição",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Aprender sobre laços de repetição e suas aplicações.\n\nComo fazer: revisar conceitos, praticar, resolver exercícios."
+        },
+        {
+          "id": "task-10",
+          "title": "Funções em Python",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Entender como criar e utilizar funções em Python.\n\nComo fazer: ler documentação, praticar exemplos, fazer exercícios."
+        },
+        {
+          "id": "task-11",
+          "title": "Exercícios práticos",
+          "type": "pratica",
+          "hours": "4h",
+          "description": "Descricao: Realizar exercícios práticos sobre controle de fluxo e funções.\n\nComo fazer: resolver 5 exercícios, revisar soluções, discutir."
+        },
+        {
+          "id": "task-12",
+          "title": "Revisão da semana",
+          "type": "teoria",
+          "hours": "2h",
+          "description": "Descricao: Revisar o conteúdo estudado na semana.\n\nComo fazer: reler anotações, fazer um resumo, testar conhecimentos."
+        },
+        {
+          "id": "task-13",
+          "title": "Leitura complementar",
+          "type": "leitura",
+          "hours": "1h",
+          "description": "Descricao: Ler material complementar sobre controle de fluxo.\n\nComo fazer: escolher um artigo, fazer anotações, discutir."
+        },
+        {
+          "id": "task-14",
+          "title": "Micro

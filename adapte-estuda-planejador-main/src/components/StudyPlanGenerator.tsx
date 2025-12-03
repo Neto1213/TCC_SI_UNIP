@@ -595,18 +595,6 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({
         </div>
       </DragDropContext>
 
-      {/* Actions */}
-      <div className="flex justify-center gap-4 mt-8">
-        <Button
-          onClick={onStartOver}
-          variant="outline"
-          className="px-8 py-3"
-          onMouseEnter={() => speakText("Criar novo plano")}
-        >
-          Criar Novo Plano
-        </Button>
-      </div>
-
       {/* Task Detail Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[520px]">
