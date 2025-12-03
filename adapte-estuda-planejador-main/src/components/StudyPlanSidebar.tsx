@@ -1,4 +1,4 @@
-import { BookOpen, Plus, Globe, Volume2, VolumeX, Trash2 } from "lucide-react";
+import { BookOpen, Plus, Trash2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,20 +9,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useAccessibility } from "@/hooks/useAccessibility";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface ServerPlanSummary {
   id: number;
@@ -52,23 +42,6 @@ export function StudyPlanSidebar({
 }: StudyPlanSidebarProps) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-
-  const {
-    voiceOn,
-    toggleVoice,
-    currentLanguage,
-    changeLanguage,
-    languageOptions,
-    texts,
-  } = useLanguage();
-  const { accessibilityMode, toggleAccessibilityMode } = useAccessibility();
-
-  const combinedVoiceAccessibilityOn = voiceOn || accessibilityMode;
-  const handleToggleVoiceAndAccessibility = () => {
-    const target = !(voiceOn && accessibilityMode); // turn both on unless they're already on together
-    if (voiceOn !== target) toggleVoice();
-    if (accessibilityMode !== target) toggleAccessibilityMode();
-  };
 
   const formatDate = (value?: number | string | null) => {
     if (!value && value !== 0) return "--";
@@ -158,74 +131,6 @@ export function StudyPlanSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      {/* footer ajustado: itens empilhados */}
-      <SidebarFooter className="border-t px-2 py-3">
-        {isCollapsed ? (
-          <Button
-            onClick={handleToggleVoiceAndAccessibility}
-            variant={combinedVoiceAccessibilityOn ? "default" : "outline"}
-            size="icon"
-            className="w-8 h-8"
-          >
-            {combinedVoiceAccessibilityOn ? (
-              <Volume2 className="w-4 h-4" />
-            ) : (
-              <VolumeX className="w-4 h-4" />
-            )}
-          </Button>
-        ) : (
-          <div className="flex flex-col gap-2 w-full">
-            <Button
-              onClick={handleToggleVoiceAndAccessibility}
-              variant={combinedVoiceAccessibilityOn ? "default" : "outline"}
-              size="sm"
-              className="w-full justify-start gap-2"
-            >
-              {combinedVoiceAccessibilityOn ? (
-                <Volume2 className="w-4 h-4" />
-              ) : (
-                <VolumeX className="w-4 h-4" />
-              )}
-              Acessibilidade
-            </Button>
-
-            <div className="flex items-center gap-2 w-full">
-              <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-              <Select
-                value={currentLanguage}
-                onValueChange={(value) => changeLanguage(value as any)}
-              >
-                <SelectTrigger className="w-full h-8 text-sm">
-                  <SelectValue>
-                    <span className="flex items-center gap-1 truncate">
-                      {
-                        languageOptions.find(
-                          (lang) => lang.code === currentLanguage
-                        )?.flag
-                      }{" "}
-                      {
-                        languageOptions.find(
-                          (lang) => lang.code === currentLanguage
-                        )?.name
-                      }
-                    </span>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {languageOptions.map((language) => (
-                    <SelectItem key={language.code} value={language.code}>
-                      <span className="flex items-center gap-2">
-                        {language.flag} {language.name}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        )}
-      </SidebarFooter>
     </Sidebar>
   );
 }

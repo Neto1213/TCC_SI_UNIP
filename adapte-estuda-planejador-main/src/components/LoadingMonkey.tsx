@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import astronautSwimming from "@/assets/astronaut-swimming.png";
 
 interface LoadingMonkeyProps {
@@ -14,23 +14,9 @@ interface LoadingMonkeyProps {
  */
 
 export default function LoadingMonkey({ message = "Gerando seu plano de estudos personalizado..." }: LoadingMonkeyProps) {
-  const [progress, setProgress] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(15);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) return 100;
-        return prev + 2;
-      });
-      
-      setTimeRemaining(prev => {
-        if (prev <= 0) return 0;
-        return prev - 0.3;
-      });
-    }, 300);
-
-    return () => clearInterval(interval);
+    document.documentElement.classList.add("hide-accessibility-toggle");
+    return () => document.documentElement.classList.remove("hide-accessibility-toggle");
   }, []);
 
   // Floating particles component
@@ -56,6 +42,22 @@ export default function LoadingMonkey({ message = "Gerando seu plano de estudos 
           }}
         />
       ))}
+    </div>
+  );
+
+  const BufferSpinner = () => (
+    <div className="relative flex items-center justify-center">
+      <div className="h-16 w-16 rounded-full border-2 border-white/10" aria-hidden="true" />
+      <motion.div
+        className="absolute h-16 w-16 rounded-full border-[6px] border-white/35 border-t-transparent border-r-transparent"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute h-10 w-10 rounded-full border-[5px] border-white/25 border-b-transparent border-l-transparent"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+      />
     </div>
   );
 
@@ -102,27 +104,7 @@ export default function LoadingMonkey({ message = "Gerando seu plano de estudos 
           {message}
         </p>
         
-        {/* Progress Bar */}
-        <div className="w-full max-w-xs">
-          <div className="bg-white/20 rounded-full h-2 mb-4">
-            <motion.div 
-              className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full"
-              initial={{ width: "0%" }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-          
-          {/* Progress Text */}
-          <div className="flex justify-between items-center text-white/70 text-sm">
-            <span>—</span>
-            <span>{Math.round(progress)}%</span>
-            <span>—</span>
-          </div>
-          <p className="text-white/60 text-xs mt-2">
-            restam {Math.max(0, Math.round(timeRemaining))} segundos
-          </p>
-        </div>
+        <BufferSpinner />
       </motion.div>
     </div>
   );

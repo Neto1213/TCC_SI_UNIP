@@ -11,7 +11,6 @@ import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { LanguageProvider } from "@/context/LanguageProvider";
-import { useLocation } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthProvider";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
@@ -20,8 +19,6 @@ import { AccessibilityToggle } from "@/components/AccessibilityToggle";
 const queryClient = new QueryClient();
 
 const ToggleGuard = () => {
-  const location = useLocation();
-  if (location.pathname === "/plano-de-estudo") return null;
   return <AccessibilityToggle />;
 };
 

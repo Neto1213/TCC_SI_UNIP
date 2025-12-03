@@ -17,7 +17,7 @@ export const AccessibilityToggle = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2 items-start">
+    <div className="accessibility-toggle fixed bottom-4 left-4 z-50 flex flex-col gap-2 items-start">
       <Button
         type="button"
         onClick={handleToggle}
