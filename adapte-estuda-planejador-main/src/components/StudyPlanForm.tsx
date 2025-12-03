@@ -177,7 +177,7 @@ const StudyPlanForm: React.FC<StudyPlanFormProps> = ({ onComplete }) => {
                 <Input
                   id="tempo"
                   type="number"
-                  min="1"
+                  min="7"
                   max="112"
                   placeholder="Ex: 10"
                   value={plan.tempo_semanal || ''}

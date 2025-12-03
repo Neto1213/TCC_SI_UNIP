@@ -1,10 +1,10 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    password: constr(min_length=8)
     name: str | None = None
 
 

@@ -27,7 +27,7 @@ export function useElevenLabs() {
   }, []);
 
   const speakWithElevenLabs = useCallback(
-    async (text: string, language: LanguageCode): Promise<boolean> => {
+    async (text: string, language: LanguageCode, volume: number = 1): Promise<boolean> => {
       const cleanText = text?.trim();
       if (!isAvailable || !cleanText) return false;
 
@@ -38,6 +38,7 @@ export function useElevenLabs() {
         const audioBlob = await fetchTtsAudio(cleanText, language, 'elevenlabs');
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
+        audio.volume = Math.min(1, Math.max(0, volume));
         audioRef.current = audio;
 
         return new Promise((resolve) => {

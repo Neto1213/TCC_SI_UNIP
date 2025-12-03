@@ -7,7 +7,7 @@ import { StudyPlan } from "@/components/StudyPlanForm";
 import { BehavioralProfile as BehavioralProfileType } from "@/components/BehavioralProfile";
 import { useAuth } from "@/context/AuthProvider";
 import { PlanDetail, PlanSummary } from "@/lib/api";
-import { ArrowLeft, Menu } from "lucide-react";
+import { ArrowLeft, Menu, Settings2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -90,8 +90,8 @@ const StudyPlanWorkspace: React.FC<StudyPlanWorkspaceProps> = ({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/plano-de-estudo/novo")}>
-                    Formulário
+                  <DropdownMenuItem onClick={() => navigate("/configuracoes")}>
+                    Configurações
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {

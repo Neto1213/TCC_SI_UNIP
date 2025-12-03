@@ -24,6 +24,8 @@ interface LanguageContextValue {
   changeLanguage: (code: LanguageCode) => void;
   voiceOn: boolean;
   toggleVoice: () => void;
+  voiceVolume: number; // 0-1
+  setVoiceVolume: (volume: number) => void;
   speakText: (text: string) => void;
   texts: Translations;
   languageOptions: LanguageOption[];
@@ -35,9 +37,27 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(undefine
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('pt');
   const [voiceOn, setVoiceOn] = useState(false);
+   const [voiceVolume, setVoiceVolumeState] = useState<number>(() => {
+    if (typeof window === "undefined") return 0.8;
+    const stored = localStorage.getItem("voice_volume");
+    const num = stored ? Number(stored) : 0.8;
+    return Number.isFinite(num) ? Math.min(1, Math.max(0, num)) : 0.8;
+  });
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const { isAvailable: elevenLabsAvailable, speakWithElevenLabs, stopElevenLabsAudio } = useElevenLabs();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const setVoiceVolume = useCallback((volume: number) => {
+    const clamped = Math.min(1, Math.max(0, volume));
+    setVoiceVolumeState(clamped);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("voice_volume", String(clamped));
+    }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = clamped;
+    }
+  }, []);
 
   // Load voices once
   useEffect(() => {
@@ -108,6 +128,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return new Promise<void>((resolve, reject) => {
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
+      audio.volume = voiceVolume;
       audioRef.current = audio;
 
       audio.onended = () => {
@@ -135,7 +156,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           reject(err);
         });
     });
-  }, []);
+  }, [voiceVolume]);
 
   const speakWithSelfHosted = useCallback(
     async (text: string) => {
@@ -175,7 +196,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     // Try ElevenLabs first for better quality
     if (elevenLabsAvailable) {
-      const success = await speakWithElevenLabs(textToSpeak, currentLanguage);
+      const success = await speakWithElevenLabs(textToSpeak, currentLanguage, voiceVolume);
       if (success) return;
     }
 
@@ -186,6 +207,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // Last fallback: native speech synthesis
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = langMap[currentLanguage];
+    utterance.volume = voiceVolume;
     const chosen = chooseVoiceForLanguage(currentLanguage);
     if (chosen) utterance.voice = chosen;
 
@@ -238,11 +260,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     changeLanguage,
     voiceOn,
     toggleVoice,
+    voiceVolume,
+    setVoiceVolume,
     speakText,
     texts,
     languageOptions,
     voicesCount: voices.length,
-  }), [currentLanguage, changeLanguage, voiceOn, toggleVoice, speakText, texts, voices.length]);
+  }), [currentLanguage, changeLanguage, voiceOn, toggleVoice, speakText, texts, voices.length, voiceVolume, setVoiceVolume]);
 
   return (
     <LanguageContext.Provider value={value}>

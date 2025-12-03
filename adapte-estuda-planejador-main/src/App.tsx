@@ -16,6 +16,7 @@ import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
 import { AccessibilityProvider } from "@/context/AccessibilityProvider";
 import { AccessibilityToggle } from "@/components/AccessibilityToggle";
+import Settings from "./pages/Settings";
 const queryClient = new QueryClient();
 
 const ToggleGuard = () => {
@@ -69,6 +70,14 @@ const App = () => (
                   element={
                     <PrivateRoute>
                       <Index />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/configuracoes"
+                  element={
+                    <PrivateRoute>
+                      <Settings />
                     </PrivateRoute>
                   }
                 />

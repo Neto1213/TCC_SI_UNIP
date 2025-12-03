@@ -1,129 +1,134 @@
 {
-  "tema": "python",
-  "perfil_label": "P1",
-  "estilo": "P",
+  "tema": "corpo humano",
+  "perfil_label": "T1",
+  "estilo": "T",
   "nivel": 1,
-  "objetivo": "habito",
-  "carga_horas_semana": 20,
+  "objetivo": "prova",
+  "carga_horas_semana": 15,
   "semanas": 4,
   "plano": [
     {
       "semana": 1,
-      "objetivo_semana": "Introdução ao Python",
+      "objetivo_semana": "Introdução ao corpo humano",
       "topicos": [
-        "Instalação do Python",
-        "Sintaxe básica",
-        "Tipos de dados"
+        "Anatomia básica",
+        "Fisiologia",
+        "Sistema esquelético"
       ],
       "tarefas": [
         {
           "id": "task-1",
-          "title": "Instalar Python",
-          "type": "pratica",
-          "hours": "2h",
-          "description": "Descricao: Instalar o Python e configurar o ambiente de desenvolvimento.\n\nComo fazer: baixar instalador, seguir instruções, verificar instalação."
+          "title": "Estudar anatomia básica",
+          "type": "teoria",
+          "hours": "3h",
+          "description": "Descricao: Compreender os principais sistemas do corpo humano.\n\nComo fazer: ler capítulos, fazer anotações, revisar conceitos."
         },
         {
           "id": "task-2",
-          "title": "Estudar sintaxe básica",
+          "title": "Revisar fisiologia",
           "type": "teoria",
-          "hours": "3h",
-          "description": "Descricao: Compreender a sintaxe básica do Python e suas regras.\n\nComo fazer: ler documentação, fazer anotações, praticar exemplos."
+          "hours": "2h",
+          "description": "Descricao: Revisar os processos fisiológicos fundamentais.\n\nComo fazer: revisar anotações, fazer resumos, discutir com colegas."
         },
         {
           "id": "task-3",
-          "title": "Tipos de dados",
+          "title": "Estudar sistema esquelético",
           "type": "teoria",
-          "hours": "3h",
-          "description": "Descricao: Aprender sobre os tipos de dados em Python e suas operações.\n\nComo fazer: revisar tipos, fazer exercícios, validar respostas."
+          "hours": "2h",
+          "description": "Descricao: Entender a estrutura e função dos ossos.\n\nComo fazer: ler material, fazer esquemas, revisar com flashcards."
         },
         {
           "id": "task-4",
-          "title": "Exercícios práticos",
-          "type": "pratica",
-          "hours": "4h",
-          "description": "Descricao: Realizar exercícios práticos para fixar o conteúdo aprendido.\n\nComo fazer: resolver 5 exercícios, revisar soluções, discutir com colegas."
+          "title": "Fazer exercícios práticos",
+          "type": "prática",
+          "hours": "3h",
+          "description": "Descricao: Aplicar conhecimentos em exercícios práticos.\n\nComo fazer: resolver exercícios, discutir soluções, revisar erros."
         },
         {
           "id": "task-5",
-          "title": "Revisão da semana",
-          "type": "teoria",
+          "title": "Simulados sobre anatomia",
+          "type": "simulados",
           "hours": "2h",
-          "description": "Descricao: Revisar todo o conteúdo estudado na semana.\n\nComo fazer: reler anotações, fazer um resumo, testar conhecimentos."
+          "description": "Descricao: Realizar simulados para testar conhecimentos.\n\nComo fazer: fazer provas anteriores, revisar respostas, discutir com colegas."
         },
         {
           "id": "task-6",
-          "title": "Leitura complementar",
-          "type": "leitura",
-          "hours": "1h",
-          "description": "Descricao: Ler material complementar sobre Python.\n\nComo fazer: escolher um artigo, fazer anotações, discutir com colegas."
-        },
-        {
-          "id": "task-7",
-          "title": "Micro-hábitos diários",
-          "type": "consistencia",
-          "hours": "1h",
-          "description": "Descricao: Praticar micro-hábitos diários para fixar o aprendizado.\n\nComo fazer: resolver 1 exercício, revisar anotações, programar 10 min."
+          "title": "Revisar conteúdos da semana",
+          "type": "resumo",
+          "hours": "3h",
+          "description": "Descricao: Consolidar o aprendizado da semana.\n\nComo fazer: fazer resumos, revisar anotações, discutir com colegas."
         }
       ],
       "referencias": [
         {
-          "titulo": "Documentação do Python",
-          "url": "https://docs.python.org/3/"
+          "titulo": "Anatomia Humana",
+          "url": "https://www.exemplo.com/anatomia"
+        },
+        {
+          "titulo": "Fisiologia Básica",
+          "url": "https://www.exemplo.com/fisiologia"
         }
       ]
     },
     {
       "semana": 2,
-      "objetivo_semana": "Controle de fluxo e funções",
+      "objetivo_semana": "Sistema muscular e circulatório",
       "topicos": [
-        "Estruturas condicionais",
-        "Laços de repetição",
-        "Funções"
+        "Sistema muscular",
+        "Sistema circulatório",
+        "Fisiologia do coração"
       ],
       "tarefas": [
         {
-          "id": "task-8",
-          "title": "Estudar estruturas condicionais",
+          "id": "task-7",
+          "title": "Estudar sistema muscular",
           "type": "teoria",
           "hours": "3h",
-          "description": "Descricao: Compreender como funcionam as estruturas condicionais em Python.\n\nComo fazer: ler exemplos, praticar, fazer exercícios."
+          "description": "Descricao: Compreender a estrutura e função dos músculos.\n\nComo fazer: ler material, fazer anotações, revisar conceitos."
+        },
+        {
+          "id": "task-8",
+          "title": "Revisar sistema circulatório",
+          "type": "teoria",
+          "hours": "2h",
+          "description": "Descricao: Revisar a anatomia e fisiologia do sistema circulatório.\n\nComo fazer: revisar anotações, fazer resumos, discutir com colegas."
         },
         {
           "id": "task-9",
-          "title": "Laços de repetição",
+          "title": "Estudar fisiologia do coração",
           "type": "teoria",
-          "hours": "3h",
-          "description": "Descricao: Aprender sobre laços de repetição e suas aplicações.\n\nComo fazer: revisar conceitos, praticar, resolver exercícios."
+          "hours": "2h",
+          "description": "Descricao: Entender o funcionamento do coração e circulação.\n\nComo fazer: ler material, fazer esquemas, revisar com flashcards."
         },
         {
           "id": "task-10",
-          "title": "Funções em Python",
-          "type": "teoria",
+          "title": "Fazer exercícios práticos",
+          "type": "prática",
           "hours": "3h",
-          "description": "Descricao: Entender como criar e utilizar funções em Python.\n\nComo fazer: ler documentação, praticar exemplos, fazer exercícios."
+          "description": "Descricao: Aplicar conhecimentos em exercícios práticos.\n\nComo fazer: resolver exercícios, discutir soluções, revisar erros."
         },
         {
           "id": "task-11",
-          "title": "Exercícios práticos",
-          "type": "pratica",
-          "hours": "4h",
-          "description": "Descricao: Realizar exercícios práticos sobre controle de fluxo e funções.\n\nComo fazer: resolver 5 exercícios, revisar soluções, discutir."
+          "title": "Simulados sobre sistema muscular",
+          "type": "simulados",
+          "hours": "2h",
+          "description": "Descricao: Realizar simulados para testar conhecimentos.\n\nComo fazer: fazer provas anteriores, revisar respostas, discutir com colegas."
         },
         {
           "id": "task-12",
-          "title": "Revisão da semana",
-          "type": "teoria",
-          "hours": "2h",
-          "description": "Descricao: Revisar o conteúdo estudado na semana.\n\nComo fazer: reler anotações, fazer um resumo, testar conhecimentos."
+          "title": "Revisar conteúdos da semana",
+          "type": "resumo",
+          "hours": "3h",
+          "description": "Descricao: Consolidar o aprendizado da semana.\n\nComo fazer: fazer resumos, revisar anotações, discutir com colegas."
+        }
+      ],
+      "referencias": [
+        {
+          "titulo": "Sistema Muscular",
+          "url": "https://www.exemplo.com/muscular"
         },
         {
-          "id": "task-13",
-          "title": "Leitura complementar",
-          "type": "leitura",
-          "hours": "1h",
-          "description": "Descricao: Ler material complementar sobre controle de fluxo.\n\nComo fazer: escolher um artigo, fazer anotações, discutir."
-        },
-        {
-          "id": "task-14",
-          "title": "Micro
+          "titulo": "Circulação Sanguínea",
+          "url": "https://www.exemplo.com/circulacao"
+        }
+      ]

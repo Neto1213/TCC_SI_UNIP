@@ -87,6 +87,7 @@ const Dashboard = () => {
       setCheckingPlans(false);
     }
   };
+  const goToSettings = () => navigate("/configuracoes");
   const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
@@ -146,7 +147,7 @@ const Dashboard = () => {
               <Button
                 variant="outline"
                 className="justify-between"
-                onClick={() => alert("Configurações em breve!")}
+                onClick={goToSettings}
                 onMouseEnter={() => speakText("Configurações")}
               >
                 <span>Configurações</span>
